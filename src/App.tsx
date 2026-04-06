@@ -1,15 +1,12 @@
 import "./App.css"
-import MultibankLogo from "./assets/MultiBank-Logo.png"
+import Header from "./components/Header"
+import TickersList from "./components/TickersList"
 
 function App() {
   return (
     <>
-      <header className="flex">
-        <img src={MultibankLogo} alt="Multibank Logo" height={82} width={181} />
-        <h1 className="text-2xl font-bold mt-4 ml-2">
-          Real Time Trading Dashboard
-        </h1>
-      </header>
+      <Header />
+      <TickersList />
     </>
   )
 }

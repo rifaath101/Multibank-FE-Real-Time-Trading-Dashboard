@@ -1,0 +1,43 @@
+import { mockTickerList } from "../mocks/tickers"
+
+function TickersList() {
+  const tickers = mockTickerList
+
+  return (
+    <div className="mt-8">
+      <h2 className="text-xl font-semibold">All</h2>
+      <div className="mt-4 space-y-3">
+        {tickers.map((ticker) => (
+          <div key={ticker.symbol} className="ticker-row">
+            <div className="ticker-symbol">{ticker.symbol}</div>
+
+            <div className="ticker-fields">
+              <p className="ticker-name">{ticker.name}</p>
+              <p className="ticker-value">${ticker.price.toFixed(2)}</p>
+              <p
+                className={`ticker-pill ${
+                  ticker.change > 0 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                }`}
+              >
+                {ticker.change > 0 ? `+${ticker.change.toFixed(2)}` : ticker.change.toFixed(2)}
+              </p>
+              <p
+                className={`ticker-pill ${
+                  ticker.changePercent > 0
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
+                }`}
+              >
+                {ticker.changePercent > 0
+                  ? `+${ticker.changePercent.toFixed(2)}%`
+                  : `${ticker.changePercent.toFixed(2)}%`}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default TickersList
