@@ -1,17 +1,9 @@
-import { mockTickerList } from "../mocks/tickers"
-import type { TickerListItem } from "../mocks/tickers"
+import { useMarketStore } from "../store/marketStore"
 
-type TickersListProps = {
-  selectedSymbol: string
-  onSelectTicker: (ticker: TickerListItem) => void
-}
-
-function TickersList({ selectedSymbol, onSelectTicker }: TickersListProps) {
-  const tickers = mockTickerList
-
-  const handleTickerClick = (ticker: TickerListItem) => {
-    onSelectTicker(ticker)
-  }
+function TickersList() {
+  const tickers = useMarketStore((s) => s.tickers)
+  const selectedSymbol = useMarketStore((s) => s.selectedSymbol)
+  const setSelectedTicker = useMarketStore((s) => s.setSelectedTicker)
 
   return (
     <div className="mt-8">
@@ -23,7 +15,7 @@ function TickersList({ selectedSymbol, onSelectTicker }: TickersListProps) {
             className={`ticker-row ${selectedSymbol === ticker.symbol ? "ticker-row-selected" : ""}`}
             role="button"
             tabIndex={0}
-            onClick={() => handleTickerClick(ticker)}
+            onClick={() => setSelectedTicker(ticker)}
           >
             <div className="ticker-symbol">{ticker.symbol}</div>
 

@@ -1,22 +1,28 @@
 import "./App.css"
-import { useState } from "react"
 import Header from "./components/Header"
 import TickersList from "./components/TickersList"
 import StockLineChart from "./components/StockLineChart"
-import { mockTickerList } from "./mocks/tickers"
-import type { TickerListItem } from "./mocks/tickers"
+import { useMarketBootstrap } from "./hooks/useMarketBootstrap"
+import { useMarketStore } from "./store/marketStore"
 
 function App() {
-  const [selectedTicker, setSelectedTicker] = useState<TickerListItem>(mockTickerList[0])
+  useMarketBootstrap()
+
+  const tickers = useMarketStore((s) => s.tickers)
+
+  const selectedSymbol = useMarketStore((s) => s.selectedSymbol)
+  const selectedTicker =
+    tickers.find((t) => t.symbol === selectedSymbol) ?? tickers[0]
+
+  if (!selectedTicker) {
+    return null
+  }
 
   return (
     <>
       <Header />
       <StockLineChart ticker={selectedTicker} />
-      <TickersList
-        selectedSymbol={selectedTicker.symbol}
-        onSelectTicker={setSelectedTicker}
-      />
+      <TickersList />
     </>
   )
 }

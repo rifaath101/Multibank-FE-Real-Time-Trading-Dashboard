@@ -65,8 +65,6 @@ const createMockPriceAndTimeData = (ticker: TickerListItem): ChartPoint[] => {
     price: Number(currentPrice.toFixed(2)),
   }
 
-  console.log(generatedSeries, " generatedSeries")
-
   return generatedSeries
 }
 
