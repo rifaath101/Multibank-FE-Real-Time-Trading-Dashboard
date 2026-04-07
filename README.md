@@ -72,6 +72,15 @@ Frontend for a trading-style dashboard: browse tickers, select one, and view a p
     - Ticker click updates selected symbol and chart context
     - Empty ticker state renders nothing safely
 
+## Assumptions and Trade-offs
+
+- Live market updates are simulated with a client-side interval feed in `src/lib/mockMarketFeed.ts`.
+- The feed integration is isolated, so replacing it with a real WebSocket client can be done without changing UI components.
+- Backend/socket integration was treated as out-of-scope for this submission, so a real WebSocket connection is not implemented here.
+- Login credentials are hardcoded for interview/demo scope and are not production-secure.
+- Lockout persistence is implemented in browser storage (`localStorage`) to retain state across page refresh.
+- Current test suite focuses on integration behavior (login flow, app gate, dashboard interactions), not end-to-end browser automation.
+
 ## Project layout (high level)
 
 ```text
