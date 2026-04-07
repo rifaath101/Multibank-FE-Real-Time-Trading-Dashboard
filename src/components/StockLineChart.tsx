@@ -36,11 +36,14 @@ const formatTooltipValue = (value: unknown): [string, string] => {
 const createMockPriceAndTimeData = (ticker: TickerListItem): ChartPoint[] => {
   const currentPrice = ticker.price
   const netMove = ticker.change
+  // Reconstruct an approximate opening price using current price and net move.
   const startingPriceEstimate = currentPrice - netMove
   const totalPoints = 12
-  const generatedSeries: ChartPoint[] = []
+  const generatedChartPoints: ChartPoint[] = []
 
   for (let pointIndex = 0; pointIndex < totalPoints; pointIndex += 1) {
+    // Blend a directional trend (towards net move) with a wave pattern
+    // to produce a realistic-looking graph line.
     const progressRatio = pointIndex / (totalPoints - 1)
     const directionalMove = netMove * progressRatio
 
@@ -51,22 +54,24 @@ const createMockPriceAndTimeData = (ticker: TickerListItem): ChartPoint[] => {
       (startingPriceEstimate + directionalMove + fluctuation).toFixed(2),
     )
 
-    generatedSeries.push({
+    generatedChartPoints.push({
       label: buildHalfHourLabel(pointIndex),
       price: simulatedPrice,
     })
   }
 
-  generatedSeries[generatedSeries.length - 1] = {
-    label: generatedSeries[generatedSeries.length - 1].label,
+  // Force the final point to match the live/current ticker price exactly.
+  generatedChartPoints[generatedChartPoints.length - 1] = {
+    label: generatedChartPoints[generatedChartPoints.length - 1].label,
     price: Number(currentPrice.toFixed(2)),
   }
 
-  return generatedSeries
+  return generatedChartPoints
 }
 
 const StockLineChart = ({ ticker }: StockLineChartProps) => {
   const chartData = createMockPriceAndTimeData(ticker)
+  // Use green for gains and red for losses.
   const lineColor = ticker.change >= 0 ? "#16a34a" : "#dc2626"
 
   return (

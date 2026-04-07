@@ -8,6 +8,32 @@ const LOCKOUT_MS = 60_000
 const FAILED_ATTEMPTS_KEY = "login.failedAttempts"
 const LOCKOUT_UNTIL_KEY = "login.lockoutUntil"
 
+function getNumberFromLocalStorage(key: string): number | null {
+  if (typeof window === "undefined") return null
+  const saved = window.localStorage.getItem(key)
+  const parsed = Number(saved)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function getFailedAttemptsFromLocalStorage(
+  key: string,
+  fallbackValue: number,
+): number {
+  const parsed = getNumberFromLocalStorage(key)
+  return parsed !== null && parsed >= 0 ? parsed : fallbackValue
+}
+
+function getLockoutValueFromLocalStorage(key: string): number | null {
+  const parsed = getNumberFromLocalStorage(key)
+  // Expired lockout values are cleared so refresh cannot reuse stale lockouts.
+  if (parsed === null || parsed <= Date.now()) {
+    if (typeof window === "undefined") return null
+    window.localStorage.removeItem(key)
+    return null
+  }
+  return parsed
+}
+
 type LoginProps = {
   onSuccess: () => void
 }
@@ -15,22 +41,12 @@ type LoginProps = {
 function Login({ onSuccess }: LoginProps) {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const [failedAttempts, setFailedAttempts] = useState(() => {
-    if (typeof window === "undefined") return 0
-    const saved = window.localStorage.getItem(FAILED_ATTEMPTS_KEY)
-    const parsed = Number(saved)
-    return Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
-  })
-  const [lockoutUntil, setLockoutUntil] = useState<number | null>(() => {
-    if (typeof window === "undefined") return null
-    const saved = window.localStorage.getItem(LOCKOUT_UNTIL_KEY)
-    const parsed = Number(saved)
-    if (!Number.isFinite(parsed) || parsed <= Date.now()) {
-      window.localStorage.removeItem(LOCKOUT_UNTIL_KEY)
-      return null
-    }
-    return parsed
-  })
+  const [failedAttempts, setFailedAttempts] = useState(() =>
+    getFailedAttemptsFromLocalStorage(FAILED_ATTEMPTS_KEY, 0),
+  )
+  const [lockoutUntil, setLockoutUntil] = useState<number | null>(() =>
+    getLockoutValueFromLocalStorage(LOCKOUT_UNTIL_KEY),
+  )
   const [error, setError] = useState<string | null>(null)
   const [now, setNow] = useState(0)
 
@@ -40,6 +56,7 @@ function Login({ onSuccess }: LoginProps) {
     const isLockoutActive = Date.now() < lockoutUntil
     if (!isLockoutActive) return
 
+    // Re-render once per second while locked so the countdown updates.
     const intervalMs = 1000
     setTimeout(() => setNow(Date.now()), 0)
     const intervalId = setInterval(() => {
@@ -76,6 +93,7 @@ function Login({ onSuccess }: LoginProps) {
     let attempts = failedAttempts
 
     if (effectiveLockout !== null && today >= effectiveLockout) {
+      // If lockout has already expired, reset state before validating.
       effectiveLockout = null
       attempts = 0
       setLockoutUntil(null)
@@ -90,6 +108,7 @@ function Login({ onSuccess }: LoginProps) {
     }
 
     if (username === VALID_USERNAME && password === VALID_PASSWORD) {
+      // Successful login clears lockout and failed-attempt persistence.
       setFailedAttempts(0)
       setLockoutUntil(null)
       window.localStorage.removeItem(FAILED_ATTEMPTS_KEY)
@@ -103,6 +122,7 @@ function Login({ onSuccess }: LoginProps) {
     setError("User not found")
 
     if (next >= MAX_ATTEMPTS) {
+      // Third failed attempt starts a 60-second lockout window.
       const lockedUntil = Date.now() + LOCKOUT_MS
       setLockoutUntil(lockedUntil)
       setNow(Date.now())
