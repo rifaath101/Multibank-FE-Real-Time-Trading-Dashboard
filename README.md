@@ -4,7 +4,7 @@ Frontend for a trading-style dashboard: browse tickers, select one, and view a p
 
 ## Overview
 
-- **Stack:** React 19, TypeScript, Vite 8, Tailwind CSS v4, Recharts, Zustand.
+- **Stack:** React 19, TypeScript, Vite 8, Tailwind CSS v4, Recharts, Zustand, Vitest, React Testing Library.
 - **Features:**
   - Basic **login UI** gate before the dashboard.
   - Ticker list with live-style price updates via a **mock interval feed** (not a real WebSocket).
