@@ -1,30 +1,15 @@
-import "./App.css"
-import Header from "./components/Header"
-import TickersList from "./components/TickersList"
-import StockLineChart from "./components/StockLineChart"
-import { useMarketBootstrap } from "./hooks/useMarketBootstrap"
-import { useMarketStore } from "./store/marketStore"
+import { useState } from "react"
+import Login from "./components/Login"
+import TradingDashboard from "./components/TradingDashboard"
 
 function App() {
-  useMarketBootstrap()
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  const tickers = useMarketStore((s) => s.tickers)
-
-  const selectedSymbol = useMarketStore((s) => s.selectedSymbol)
-  const selectedTicker =
-    tickers.find((t) => t.symbol === selectedSymbol) ?? tickers[0]
-
-  if (!selectedTicker) {
-    return null
+  if (!isLoggedIn) {
+    return <Login onSuccess={() => setIsLoggedIn(true)} />
   }
 
-  return (
-    <>
-      <Header />
-      <StockLineChart ticker={selectedTicker} />
-      <TickersList />
-    </>
-  )
+  return <TradingDashboard />
 }
 
 export default App

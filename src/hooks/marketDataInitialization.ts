@@ -1,8 +1,8 @@
 import { useEffect } from "react"
-import { connectMockLivePriceFeed } from "../lib/market/mockMarketFeed"
+import { connectMockLivePriceFeed } from "../lib/mockMarketFeed"
 import { useMarketStore } from "../store/marketStore"
 
-export function useMarketBootstrap() {
+export function useInitializeMarketDataFromMocks() {
   const resetMarketStateFromMocks = useMarketStore(
     (s) => s.resetMarketStateFromMocks,
   )

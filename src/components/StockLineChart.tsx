@@ -25,7 +25,6 @@ const buildHalfHourLabel = (pointIndex: number): string => {
   return `${hour}:${minute}`
 }
 
-// helper function (above your component or in a separate utils file)
 const formatTooltipValue = (value: unknown): [string, string] => {
   if (typeof value !== "number") {
     return [String(value), "Price"]
@@ -42,11 +41,9 @@ const createMockPriceAndTimeData = (ticker: TickerListItem): ChartPoint[] => {
   const generatedSeries: ChartPoint[] = []
 
   for (let pointIndex = 0; pointIndex < totalPoints; pointIndex += 1) {
-    // Moves the line gradually from estimated start price to current price.
     const progressRatio = pointIndex / (totalPoints - 1)
     const directionalMove = netMove * progressRatio
 
-    // Adds small fluctuation so the line looks more natural.
     const fluctuationAmplitude = Math.max(Math.abs(netMove) * 0.22, 0.4)
     const fluctuation = Math.sin(pointIndex * 1.35) * fluctuationAmplitude
 
@@ -77,8 +74,8 @@ const StockLineChart = ({ ticker }: StockLineChartProps) => {
       <h2 className="text-xl font-semibold">{ticker.symbol} performance</h2>
       <p className="mt-1 text-sm text-gray-500">{ticker.name}</p>
 
-      <div className="mt-4 h-[280px] w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="mt-4 h-[280px] min-h-[280px] w-full min-w-0">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={280}>
           <LineChart data={chartData}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis dataKey="label" tick={{ fontSize: 12 }} />

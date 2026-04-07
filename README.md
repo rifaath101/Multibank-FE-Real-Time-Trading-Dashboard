@@ -1,74 +1,66 @@
-# React + TypeScript + Vite
+# Multibank FE — Real-Time Trading Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend for a trading-style dashboard: browse tickers, select one, and view a price chart. Data is **mocked on the client** (no backend required for local development).
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Stack:** React 19, TypeScript, Vite 8, Tailwind CSS v4, Recharts, Zustand.
+- **Features:**
+  - Basic **login UI** gate before the dashboard.
+  - Ticker list with live-style price updates via a **mock interval feed** (not a real WebSocket).
+  - **Zustand** store for tickers, selection, and baseline prices used for change vs initial.
+  - **Recharts** line chart for the selected ticker.
+- **Data:** Static mock tickers in `src/mocks/tickers.ts`.
 
-## React Compiler
+## Login (Demo Credentials)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- You must sign in to access the trading dashboard.
+- Demo credentials:
+  - **Username:** `rifaath`
+  - **Password:** `123`
+- Failed login behavior:
+  - Incorrect credentials show: `User not found`
+  - 3 failed attempts triggers a 1-minute lockout before retrying
+  - Lockout state is persisted in browser storage, so refreshing the page does not reset the timer
 
-## Expanding the ESLint configuration
+## Prerequisites
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Node.js** 20+ (or current LTS) and **npm**.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Setup
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone the repository and enter the project directory.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the dev server:
+
+   ```bash
+   npm run dev
+   ```
+
+4. Open the URL Vite prints (usually `http://localhost:5173`).
+
+## Scripts
+
+| Command           | Description                             |
+| ----------------- | --------------------------------------- |
+| `npm run dev`     | Dev server with HMR                     |
+| `npm run build`   | Typecheck + production build to `dist/` |
+| `npm run preview` | Serve the production build locally      |
+| `npm run lint`    | Run ESLint                              |
+
+## Project layout (high level)
+
+```text
+src/
+  components/     # UI (Header, TickersList, StockLineChart, …)
+  hooks/          # marketDataInitialization.ts → useInitializeMarketDataFromMocks
+  lib/            # e.g. mockMarketFeed (interval → store updates)
+  mocks/          # Mock ticker data
+  store/          # Zustand market store
 ```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-# Multibank-FE-Real-Time-Trading-Dashboard
