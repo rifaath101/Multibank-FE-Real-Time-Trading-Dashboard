@@ -53,6 +53,24 @@ Frontend for a trading-style dashboard: browse tickers, select one, and view a p
 | `npm run build`   | Typecheck + production build to `dist/` |
 | `npm run preview` | Serve the production build locally      |
 | `npm run lint`    | Run ESLint                              |
+| `npm run test`    | Run Vitest test suite once              |
+| `npm run test:watch` | Run Vitest in watch mode             |
+
+## Test Coverage
+
+- Test runner: **Vitest** + **React Testing Library** (`tests/` folder).
+- Current integration coverage includes:
+  - **Login flow** (`tests/Login.test.tsx`)
+    - Invalid credentials show `User not found`
+    - Lockout after 3 failed attempts
+    - Lockout persists across refresh and unlocks after 60s
+    - Valid credentials trigger successful login
+  - **App auth gate** (`tests/App.test.tsx`)
+    - Successful login transitions from login screen to dashboard
+  - **Dashboard behavior** (`tests/TradingDashboard.test.tsx`)
+    - Renders header, chart area, and tickers list
+    - Ticker click updates selected symbol and chart context
+    - Empty ticker state renders nothing safely
 
 ## Project layout (high level)
 
