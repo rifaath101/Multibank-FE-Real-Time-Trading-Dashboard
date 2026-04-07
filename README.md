@@ -81,4 +81,7 @@ src/
   lib/            # e.g. mockMarketFeed (interval → store updates)
   mocks/          # Mock ticker data
   store/          # Zustand market store
+tests/
+  *.test.tsx      # Integration tests (login, app flow, dashboard)
+  setup.ts        # Testing setup (jest-dom matchers)
 ```
